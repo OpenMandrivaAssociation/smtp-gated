@@ -6,7 +6,6 @@ Version: 1.4.17
 Release: 0
 Group: System/Servers
 License: GNU GPL
-Vendor: Bartlomiej Korupczynski <bartek@klolik.org>
 #Requires: spamassassin-spamd clamd libpcre libspf
 Requires:  libspf
 #BuildRequires: libpcre-devel libspf-devel
@@ -21,7 +20,6 @@ Transparent proxy for SMTP traffic.
 
 %prep
 %setup -q -n %{name}-%{version}
-
 
 %build
 %configure --disable-pcre
