@@ -13,6 +13,7 @@ BuildRequires: libspf-devel
 Provides: smtp-proxy
 URL: http://smtp-proxy.klolik.org
 Source: http://software.klolik.org/smtp-gated/files/%{name}-%{version}.tar.gz
+Patch0: smtp-gated-1.4.17-fdprintf.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -20,7 +21,7 @@ Transparent proxy for SMTP traffic.
 
 %prep
 %setup -q -n %{name}-%{version}
-
+%patch0 -p0 -b .fdprintf
 %build
 %configure --disable-pcre
 %make
