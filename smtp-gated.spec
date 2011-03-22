@@ -1,21 +1,20 @@
 %define user smtpgw
 
-Summary: SMTP Transparent Proxy
-Name: smtp-gated
-Version: 1.4.17
-Release: 0
-Group: System/Servers
-License: GNU GPL
+Summary:	SMTP Transparent Proxy
+Name: 		smtp-gated
+Version: 	1.4.17
+Release: 	%mkrel 1
+Group: 		System/Servers
+License:	GPL2v+
 #Requires: spamassassin-spamd clamd libpcre libspf
-Requires:  libspf
 #BuildRequires: libpcre-devel libspf-devel
-BuildRequires: libspf-devel
-Provides: smtp-proxy
-URL: http://smtp-proxy.klolik.org
-Source: http://software.klolik.org/smtp-gated/files/%{name}-%{version}.tar.gz
-Patch0: smtp-gated-1.4.17-fdprintf.patch
-Patch1: smtp-gated-1.4.17-syslog.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
+BuildRequires:	libspf-devel
+Provides: 	smtp-proxy
+URL: 		http://smtp-proxy.klolik.org
+Source: 	http://software.klolik.org/smtp-gated/files/%{name}-%{version}.tar.gz
+Patch0: 	smtp-gated-1.4.17-fdprintf.patch
+Patch1: 	smtp-gated-1.4.17-syslog.patch
+BuildRoot: 	%{_tmppath}/%{name}-%{version}-root
 
 %description
 Transparent proxy for SMTP traffic.
