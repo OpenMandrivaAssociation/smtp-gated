@@ -3,15 +3,15 @@
 Summary:	SMTP Transparent Proxy
 Name: 		smtp-gated
 Version: 	1.4.17
-Release: 	%mkrel 1
+Release: 	%mkrel 2
 Group: 		System/Servers
 License:	GPL2v+
-#Requires: spamassassin-spamd clamd libpcre libspf
-#BuildRequires: libpcre-devel libspf-devel
-BuildRequires:	libspf-devel
+#Requires: spamassassin-spamd clamd libpcre libspf2
+#BuildRequires: libpcre-devel libspf2-devel
 Provides: 	smtp-proxy
 URL: 		http://smtp-proxy.klolik.org
-Source: 	http://software.klolik.org/smtp-gated/files/%{name}-%{version}.tar.gz
+Source0: 	http://software.klolik.org/smtp-gated/files/%{name}-%{version}.tar.gz
+Source1:	smtp-gated.init
 Patch0: 	smtp-gated-1.4.17-fdprintf.patch
 Patch1: 	smtp-gated-1.4.17-syslog.patch
 BuildRoot: 	%{_tmppath}/%{name}-%{version}-root
@@ -24,25 +24,23 @@ Transparent proxy for SMTP traffic.
 %patch0 -p0 -b .fdprintf
 %patch1 -p0 -b .syslog
 %build
-%configure --disable-pcre
+%configure --disable-pcre --disable-spf
 %make
 
 %install
 %makeinstall
 
-install -d $RPM_BUILD_ROOT{/var/spool/%{name}/{msg,lock}}
-install -d $RPM_BUILD_ROOT/var/run/%{name}
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
+install -d %{buildroot}{/var/spool/%{name}/{msg,lock}}
+install -d %{buildroot}/var/run/%{name}
+install -d %{buildroot}%{_initrddir}
 
-install contrib/redhat.init $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE1} %{buildroot}%{_initrddir}/%{name}
 
-src/%{name} -t | sed 's/^\([^#]\)/; &/' > $RPM_BUILD_ROOT%{_sysconfdir}/%{name}.conf
+src/%{name} -t | sed 's/^\([^#]\)/; &/' > %{buildroot}%{_sysconfdir}/%{name}.conf
 
-pushd $RPM_BUILD_ROOT
-
-mkdir -p var/spool/%{name}/msg
-mkdir -p var/spool/%{name}/lock
-mkdir -p var/run/%{name}
+mkdir -p %{buildroot}/var/spool/%{name}/msg
+mkdir -p %{buildroot}/var/spool/%{name}/lock
+mkdir -p %{buildroot}/var/run/%{name}
 
 %clean
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
@@ -51,38 +49,26 @@ mkdir -p var/run/%{name}
 %defattr(0644,root,root,0755)
 %doc AUTHORS ChangeLog COPYING INSTALL NEWS README README.PL
 %doc contrib/fixed.conf contrib/nat.conf
-%config(noreplace)	%{_sysconfdir}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/%{name}.conf
 %{_mandir}
 
 %defattr(0755,root,root,0755)
 %{_sbindir}/%{name}
-/etc/rc.d/init.d/%{name}
+%{_initrddir}/%{name}
 
 %defattr(0750,smtpgw,smtpgw,0750)
 /var/spool/%{name}
 /var/run/%{name}
 
-
 %pre
-id %{user} >/dev/null 2>&1 && exit 0
+%_pre_useradd %{user} /var/spool/%{name} /bin/false
 
-groupadd -r -f %{user} || {
-	echo "Group %{user} account could not be created" >&2
-	exit 1
-}
-
-useradd -g %{user} -d /var/spool/%{name}/ -s /bin/false -c "SMTP Proxy" -M -n -r %{user} || {
-	echo "User %{user} account could not be created" >&2
-	exit 1
-}
-
-
-%post
-chkconfig --add %{name}
-/etc/rc.d/init.d/%{name} condrestart
+%postun
+%_postun_userdel %{user}
+%_postun_groupdel %{user}
 
 %preun
-if [ $1 == 0 ]; then
-        /etc/rc.d/init.d/%{name} stop >/dev/null 2>&1
-        chkconfig --del %{name}
-fi
+%_preun_service %{name}
+
+%post
+%_post_service %{name}
