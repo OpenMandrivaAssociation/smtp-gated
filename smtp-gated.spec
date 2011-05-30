@@ -3,17 +3,19 @@
 Summary:	SMTP Transparent Proxy
 Name: 		smtp-gated
 Version: 	1.4.17
-Release: 	%mkrel 2
+Release: 	%mkrel 3
 Group: 		System/Servers
 License:	GPL2v+
 #Requires: spamassassin-spamd clamd libpcre libspf2
-#BuildRequires: libpcre-devel libspf2-devel
+BuildRequires:  pcre-devel 
+BuildRequires:  libspf2-devel
 Provides: 	smtp-proxy
 URL: 		http://smtp-proxy.klolik.org
 Source0: 	http://software.klolik.org/smtp-gated/files/%{name}-%{version}.tar.gz
 Source1:	smtp-gated.init
 Patch0: 	smtp-gated-1.4.17-fdprintf.patch
 Patch1: 	smtp-gated-1.4.17-syslog.patch
+Patch2:		smtp-gated-1.4.17-linkage.patch
 BuildRoot: 	%{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -23,8 +25,10 @@ Transparent proxy for SMTP traffic.
 %setup -q -n %{name}-%{version}
 %patch0 -p0 -b .fdprintf
 %patch1 -p0 -b .syslog
+%patch2 -p0 -b .linkage
 %build
-%configure --disable-pcre --disable-spf
+%configure --enable-pcre=%{_includedir} --enable-spf=%{_includedir}/spf2
+
 %make
 
 %install
