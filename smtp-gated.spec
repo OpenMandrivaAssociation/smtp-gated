@@ -3,7 +3,7 @@
 Summary:	SMTP Transparent Proxy
 Name: 		smtp-gated
 Version: 	1.4.17
-Release: 	%mkrel 3
+Release: 	%mkrel 4
 Group: 		System/Servers
 License:	GPL2v+
 #Requires: spamassassin-spamd clamd libpcre libspf2
