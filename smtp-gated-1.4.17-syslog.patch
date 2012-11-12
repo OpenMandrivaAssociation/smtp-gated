@@ -1,0 +1,11 @@
+--- src/util.c	2011-03-22 14:19:13.000000000 +0100
++++ src/util.c.dlucio	2011-03-22 14:26:27.000000000 +0100
+@@ -626,7 +626,7 @@
+ 		TERMINATE_STRING(buf);
+ 
+ 		if (prio > LOG_DEBUG) prio = LOG_DEBUG;
+-		syslog(prio, buf);
++		syslog(prio, "%s", (const char*) buf);
+ 	}
+ 	errno = save;
+ } /* log_action() */

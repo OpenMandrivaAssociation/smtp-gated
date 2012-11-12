@@ -1,0 +1,11 @@
+--- src/smtp-gated.c	2010-06-17 11:21:25.000000000 +0200
++++ src/smtp-gated.c.dlucio	2011-03-22 04:28:44.000000000 +0100
+@@ -1989,7 +1989,7 @@
+ 	}
+ 
+ 	// XCLIENT successful: forward XCLIENT-ack as MTA greeting to client
+-	fdprintf(data->client, line);
++	fdprintf(data->client, "%s", line);
+ 	fdprintf(data->client, "\r\n");
+ 	return 0;
+ 
