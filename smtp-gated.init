@@ -1,0 +1,94 @@
+#! /bin/bash
+#
+# smtp-gated   Start/Stop the SMTP antivirus daemon.
+#
+# chkconfig: 2345 90 60
+# description: smtp-gated is a UNIX program that scans SMTP mail for Viruses. \
+#    Can be installed on linux NA(P)T router, and scan mail transparently \
+#    using ClamAV daemon & netfilter framework. Can also scan traffic to \
+#    one fixed MTA.
+# processname: smtp-gated
+# config: /etc/smtp-gated.conf
+# pidfile: /var/run/smtp-gated/smtp-gated.pid
+
+### BEGIN INIT INFO
+# Provides: smtp-gated
+# Required-Start: $network
+# Required-Stop: $network
+# Should-Start: $named
+# Should-Stop: $named
+# Short-Description: Starts the smtp-gated daemon
+# Description: smtp-gated is a program that scans SMTP mail
+### END INIT INFO
+
+
+# Source function library.
+. /etc/init.d/functions
+
+RETVAL=0
+
+# See how we were called.
+
+prog="smtp-gated"
+DAEMON="/usr/sbin/$prog"
+CONFIG="/etc/smtp-gated.conf"
+
+# Source configuration
+if [ -f /etc/sysconfig/$prog ] ; then
+	. /etc/sysconfig/$prog
+fi
+
+do_start() {
+	gprintf "Starting %s: " "$prog"
+	daemon $DAEMON "$CONFIG"
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+	echo
+	return $RETVAL
+}
+
+do_reload() {
+	gprintf "Syntax checking: "
+	$DAEMON -t "$CONFIG" >/dev/null
+	[ "$?" == "0" ] || return 1
+
+	gprintf "Reloading %s daemon configuration: " "$prog"
+	$DAEMON -r "$CONFIG"
+	RETVAL=$?
+	echo
+	return $RETVAL
+}
+
+case "$1" in
+	start)
+		do_start
+        	;;
+	stop)
+		gprintf "Stopping %s: " "$prog"
+		killproc $prog
+		echo
+		rm -f /var/lock/subsys/$prog
+		;;
+	restart)
+		do_stop
+		sleep 1
+		do_start
+		;;
+	reload)
+		do_reload
+		;;
+	status)
+		status $prog
+		;;
+	stats)
+		$DAEMON -s "$CONFIG"
+		;;
+	condrestart)
+		[ -f /var/lock/subsys/$prog ] && restart || :
+		;;
+	*)
+		gprintf "Usage: %s {start|stop|status|reload|restart|condrestart|stats}\n" "$0"
+		exit 1
+esac
+
+exit $?
