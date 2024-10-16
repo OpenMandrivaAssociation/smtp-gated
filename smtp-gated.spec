@@ -10,7 +10,7 @@ License:	GPL2v+
 BuildRequires:  pcre-devel 
 BuildRequires:  libspf2-devel
 Provides: 	smtp-proxy
-URL: 		http://smtp-proxy.klolik.org
+URL: 		https://smtp-proxy.klolik.org
 Source0: 	http://software.klolik.org/smtp-gated/files/%{name}-%{version}.tar.gz
 Source1:	smtp-gated.init
 Patch0: 	smtp-gated-1.4.17-fdprintf.patch
