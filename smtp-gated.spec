@@ -7,6 +7,11 @@ Release: 	7
 Group: 		System/Servers
 License:	GPL2v+
 #Requires: spamassassin-spamd clamd libpcre libspf2
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:  pcre-devel 
 BuildRequires:  libspf2-devel
 Provides: 	smtp-proxy
